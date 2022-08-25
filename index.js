@@ -20,6 +20,10 @@ async() => {
         redisClient.on('error', function(err) {
             console.log('Redis Client Error', err)
         });
+
+        redisClient.on('connect', function(err) {
+            console.log('Redis Client Connected', err)
+        });
     
         await redisClient.connect("redis://:2rI51FLJ8bD#Rh%jA@127.0.0.1:6379");
     }
@@ -160,7 +164,7 @@ async function fetchCachedGame(game) {
     if (!REDIS_ENABLED) return false;
 
     try {
-        const cachedResult = await client.get(game);
+        const cachedResult = await redisClient.get(game);
 
         if (cachedResult) {
             console.log(game, "from cache")
