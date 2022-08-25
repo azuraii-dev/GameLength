@@ -45,7 +45,7 @@ async function searchQuery(query) {
             "Referer": "https://howlongtobeat.com/",
             "Referrer-Policy": "strict-origin-when-cross-origin",
         }      
-        }
+        } 
     )
 
     try {
