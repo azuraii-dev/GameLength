@@ -2,8 +2,11 @@ const cheerio =  require('cheerio')
 const express = require('express')
 const axios = require('axios')
 const qs = require('qs')
+require('dotenv').config()
+
 const app = express()
-const port = 3000
+const PORT = process.env.PORT
+const NODE_ENV = process.env.NODE_ENV
 
 app.get('/', async(req, res) => {
 
@@ -14,8 +17,9 @@ app.get('/', async(req, res) => {
     res.json(result)
 })
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+app.listen(PORT, () => {
+    console.log(`API listening on port ${PORT}`)
+    console.log(`Environment set to ${NODE_ENV}`)
   })
 
 
