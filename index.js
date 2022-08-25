@@ -8,13 +8,30 @@ const app = express()
 const PORT = process.env.PORT
 const NODE_ENV = process.env.NODE_ENV
 
+const ERRORS = {
+    fetchError: {error: 'Unable to fetch game data'},
+    connectionError: {error: 'Unable to connect to the server'}
+}
+
 app.get('/', async(req, res) => {
+    res.json({
+        usage: '/game/{game name}',
+        description: 'Simple API to fetch average game length by game name.',
+        credits: {game_data: 'https://howlongtobeat.com', steamdeck_plugin_source: '@joamjoamjoam'},
+        author: '@azuraii',
+    })
+})
 
-    const query = req.query.query || null;
-
+app.get('/game/:query', async(req, res) => {
+    const query = req.params.query || null;
     const result = await searchQuery(query)
-    console.log(result)
     res.json(result)
+    res.end()
+})
+
+app.get('*', async(req, res) => {
+    res.redirect('/')
+    res.end()
 })
 
 app.listen(PORT, () => {
@@ -24,6 +41,9 @@ app.listen(PORT, () => {
 
 
 async function searchQuery(query) {
+
+    if (query == null) return ERRORS.fetchError;
+
     const res = await axios.post('https://howlongtobeat.com/search_results?page=1', 
     
         qs.stringify({
@@ -61,7 +81,7 @@ async function searchQuery(query) {
 
     } catch (error) {
 
-        return {error: 'Unable to fetch game data'}
+        return ERRORS.fetchError
     }
 
 }
@@ -84,7 +104,7 @@ async function getGameTime(url) {
     
     } catch (error) {
         
-        return {error: 'Unable to fetch game data'}
+        return ERRORS.fetchError
     }
 
 }
