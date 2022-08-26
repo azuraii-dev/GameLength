@@ -80,7 +80,7 @@ app.listen(PORT, () => {
 
 async function searchQuery(query) {
 
-    const cachedResult = await fetchCachedGame(query);
+    const cachedResult = await fetchCachedData(query);
 
     if (cachedResult) {
         return cachedResult
@@ -119,7 +119,7 @@ async function searchQuery(query) {
         const url = $('ul li').first().find('.shadow_text a').attr('href')
         const gameData = await getGameTime(`https://howlongtobeat.com/${url}`)
 
-        await cacheGame(query, gameData)
+        await cacheData(query, gameData)
 
         return gameData
 
@@ -157,15 +157,15 @@ async function getGameTime(url) {
 }
 
 async function cache(req, res, next) {
-    const game = req.params.query
+    const query = req.params.query
 
     if (!REDIS_ENABLED || !query) next();
 
     try {
-        const cachedResult = await redisClient.get(game);
+        const cachedResult = await redisClient.get(query);
 
         if (cachedResult) {
-            console.log(game, "from cache")
+            console.log(query, "from cache")
             res.json(JSON.parse(cachedResult));
             res.end()
         }
@@ -178,33 +178,15 @@ async function cache(req, res, next) {
 
 }
 
-async function cacheGame(game, data) {
+async function cacheData(query, data) {
     if (!REDIS_ENABLED) return;
 
-    await redisClient.set(game, JSON.stringify(data), {
+    await redisClient.set(query, JSON.stringify(data), {
         EX: 3600,
         NX: true,
     });
 
-    console.log(game, "cached")
-}
-
-async function fetchCachedGame(game) {
-
-    if (!REDIS_ENABLED) return false;
-
-    try {
-        const cachedResult = await redisClient.get(game);
-
-        if (cachedResult) {
-            console.log(game, "from cache")
-            return JSON.parse(cachedResult);
-        }
-        return false
-
-    } catch (err) {
-        console.log(err)
-    }
+    console.log(query, "cached")
 }
 
 
