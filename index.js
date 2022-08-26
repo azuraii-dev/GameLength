@@ -47,8 +47,14 @@ app.get('/', async(req, res) => {
     })
 })
 
-app.get('/game/:query', async(req, res) => {
-    const query = req.params.query || null;
+app.get('/game/:query', cache, async(req, res) => {
+    const query = req.params.query;
+
+    if (!query) {
+        res.json(ERRORS.fetchError);
+        res.end()
+        return;
+    } 
 
     const result = await searchQuery(query)
 
@@ -73,8 +79,6 @@ app.listen(PORT, () => {
 
 
 async function searchQuery(query) {
-
-    if (query == null) return ERRORS.fetchError;
 
     const cachedResult = await fetchCachedGame(query);
 
@@ -149,6 +153,28 @@ async function getGameTime(url) {
         
         return ERRORS.fetchError
     }
+
+}
+
+async function cache(req, res, next) {
+    const game = req.params.query
+
+    if (!REDIS_ENABLED || !query) next();
+
+    try {
+        const cachedResult = await redisClient.get(game);
+
+        if (cachedResult) {
+            console.log(game, "from cache")
+            res.json(JSON.parse(cachedResult));
+            res.end()
+        }
+        next()
+    } catch (err) {
+        console.log(err)
+        next()
+    }
+
 
 }
 
