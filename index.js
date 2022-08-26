@@ -50,15 +50,15 @@ app.get('/', async(req, res) => {
 app.get('/game/:query', cache, async(req, res) => {
     const query = req.params.query;
 
-    await searchQuery(query).then(result => {
+    result = await searchQuery(query)
 
-        if (result.error) {
-            res.status(404)
-        } else {
-            res.json(result)
-        }
-        res.end()
-    })
+    if (result.error) {
+        res.status(404)
+    } else {
+        res.json(result)
+    }
+    
+    res.end()
 })
 
 app.get('*', async(req, res) => {
@@ -162,7 +162,9 @@ async function cache(req, res, next) {
             console.log(query, "from cache")
             res.json(JSON.parse(cachedResult));
             res.end()
+            return;
         }
+
         next()
     } catch (err) {
         console.log(err)
