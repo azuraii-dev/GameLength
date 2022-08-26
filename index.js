@@ -24,8 +24,8 @@ let redisClient = null;
             REDIS_ENABLED = false;
         });
 
-        redisClient.on('connect', function(err) {
-            console.log('Redis Client Connected', err)
+        redisClient.on('connect', function() {
+            console.log('Redis Client Connected')
         });
     
         await redisClient.connect("redis://:2rI51FLJ8bD#Rh%jA@127.0.0.1:6379");
