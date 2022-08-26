@@ -50,15 +50,15 @@ app.get('/', async(req, res) => {
 app.get('/game/:query', cache, async(req, res) => {
     const query = req.params.query;
 
-    const result = await searchQuery(query)
+    await searchQuery(query).then(result => {
 
-    if (result.error) {
-        res.status(404)
-    } else {
-        res.json(result)
-    }
-
-    res.end()
+        if (result.error) {
+            res.status(404)
+        } else {
+            res.json(result)
+        }
+        res.end()
+    })
 })
 
 app.get('*', async(req, res) => {
