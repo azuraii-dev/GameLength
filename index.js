@@ -28,7 +28,7 @@ let redisClient = null;
             console.log('Redis Client Connected')
         });
     
-        await redisClient.connect(`redis://${process.env.REDIS_USER}:${process.env.REDIS_PASS}@127.0.0.1:6379`);
+        await redisClient.connect();
     }
 
 })();
