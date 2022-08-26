@@ -9,16 +9,19 @@ require('dotenv').config()
 const app = express()
 const PORT = process.env.PORT
 const NODE_ENV = process.env.NODE_ENV
-const REDIS_ENABLED = NODE_ENV == "production";
+let REDIS_ENABLED = NODE_ENV == "production";
 
 let redisClient = null;
 
-async() => {
+(async () => {
+
     if (REDIS_ENABLED) {
+
         redisClient = redis.createClient();
     
         redisClient.on('error', function(err) {
             console.log('Redis Client Error', err)
+            REDIS_ENABLED = false;
         });
 
         redisClient.on('connect', function(err) {
@@ -27,7 +30,8 @@ async() => {
     
         await redisClient.connect("redis://:2rI51FLJ8bD#Rh%jA@127.0.0.1:6379");
     }
-}
+
+})();
 
 const ERRORS = {
     fetchError: {error: 'Unable to fetch game data'},
