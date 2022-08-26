@@ -26,10 +26,6 @@ let redisClient = null;
 
         redisClient.on('connect', function() {
             console.log('Redis Client Connected')
-
-            redisClient.flushall('ASYNC', function() {
-                console.log("Flushed DB")
-            });
         });
     
         await redisClient.connect();
