@@ -57,7 +57,7 @@ app.get('/game/:query', cache, async(req, res) => {
     } else {
         res.json(result)
     }
-    
+
     res.end()
 })
 
@@ -127,7 +127,7 @@ async function getGameTime(url) {
 
         const gameTitle = $('.profile_header').text().trim()
 
-        const gameLength = $('.game_main_table > tbody > tr > td:nth-child(3)').first().text().trim()
+        const gameLength = $('.game_main_table > tbody > tr > td:nth-child(3)')?.first().text().trim() || "-"
 
         const steamUrl = $('.text_red')?.attr('href') || false;
 
