@@ -50,12 +50,6 @@ app.get('/', async(req, res) => {
 app.get('/game/:query', cache, async(req, res) => {
     const query = req.params.query;
 
-    if (!query) {
-        res.json(ERRORS.fetchError);
-        res.end()
-        return;
-    } 
-
     const result = await searchQuery(query)
 
     if (result.error) {
@@ -79,12 +73,6 @@ app.listen(PORT, () => {
 
 
 async function searchQuery(query) {
-
-    const cachedResult = await fetchCachedData(query);
-
-    if (cachedResult) {
-        return cachedResult
-    }
 
     const res = await axios.post('https://howlongtobeat.com/search_results?page=1', 
     
@@ -159,7 +147,13 @@ async function getGameTime(url) {
 async function cache(req, res, next) {
     const query = req.params.query
 
-    if (!REDIS_ENABLED || !query) next();
+    if (!query) {
+        res.json(ERRORS.fetchError);
+        res.end();
+        return;
+    }
+
+    if (!REDIS_ENABLED) next();
 
     try {
         const cachedResult = await redisClient.get(query);
